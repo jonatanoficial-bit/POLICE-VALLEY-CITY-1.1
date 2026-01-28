@@ -1,0 +1,225 @@
+/* Global styles */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: #f5f5f5;
+}
+
+body {
+  /* Use the city background for a cinematic feel */
+  background: url('assets/backgrounds/city.png') no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Dark overlay to improve contrast */
+body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: -1;
+}
+
+/* Generic screen styling */
+.screen {
+  width: 90%;
+  max-width: 800px;
+  background: rgba(20, 20, 30, 0.85);
+  padding: 20px 30px;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+}
+
+.title {
+  margin-top: 0;
+  font-size: 2.4em;
+  text-align: center;
+  letter-spacing: 2px;
+}
+
+.subtitle {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #c9c9c9;
+}
+
+/* Avatar selection grid */
+.avatar-selection {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.avatar-option {
+  flex: 1;
+  margin: 0 10px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.avatar-option img {
+  width: 100%;
+  display: block;
+  height: 180px;
+  object-fit: cover;
+}
+
+.avatar-option.selected {
+  border-color: #f0b132;
+}
+
+/* Input group styling */
+.input-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  margin-bottom: 5px;
+  font-size: 0.9em;
+  color: #dddddd;
+}
+
+.input-group input[type="text"] {
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1em;
+  outline: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+/* Buttons */
+.primary-button {
+  display: inline-block;
+  padding: 12px 24px;
+  font-size: 1em;
+  border: none;
+  border-radius: 4px;
+  background: #f0b132;
+  color: #1a1a1a;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: background 0.3s ease;
+}
+
+.primary-button:hover {
+  background: #d49a2b;
+}
+
+/* HUD styling */
+.hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.hud-left {
+  display: flex;
+  align-items: center;
+}
+
+#chosen-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 15px;
+  border: 2px solid #f0b132;
+}
+
+.player-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.player-name {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.player-rank {
+  font-size: 0.9em;
+  color: #bbb;
+}
+
+.hud-right {
+  text-align: right;
+  font-size: 1em;
+}
+
+.score,
+.prestige {
+  margin-bottom: 5px;
+}
+
+/* Dialogue container */
+.dialogue {
+  min-height: 120px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+  font-size: 1.1em;
+  line-height: 1.4;
+}
+
+/* Options container */
+.options {
+  display: flex;
+  flex-direction: column;
+}
+
+.option-button {
+  padding: 12px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 4px;
+  background: #2c2c45;
+  color: #f5f5f5;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  text-align: left;
+  font-size: 1em;
+}
+
+.option-button:hover {
+  background: #3b3b5e;
+}
+
+/* Result screen */
+#result-screen {
+  text-align: center;
+}
+
+#result-screen h2 {
+  margin-top: 0;
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+
+#final-message {
+  margin-bottom: 20px;
+}

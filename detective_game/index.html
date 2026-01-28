@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Valley Detective Game</title>
+    <!-- Link to the main stylesheet -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Start screen where the player chooses their avatar and enters a name -->
+    <div id="start-screen" class="screen">
+      <h1 class="title">Valley Detective</h1>
+      <p class="subtitle">
+        Escolha seu avatar e inicie sua jornada investigativa na cidade de
+        Valley.
+      </p>
+      <!-- Avatar selection grid -->
+      <div id="avatar-selection" class="avatar-selection">
+        <div class="avatar-option" data-avatar="avatar1">
+          <img src="assets/avatars/avatar1.png" alt="Avatar 1" />
+        </div>
+        <div class="avatar-option" data-avatar="avatar2">
+          <img src="assets/avatars/avatar2.png" alt="Avatar 2" />
+        </div>
+        <div class="avatar-option" data-avatar="avatar3">
+          <img src="assets/avatars/avatar3.png" alt="Avatar 3" />
+        </div>
+      </div>
+      <div class="input-group">
+        <label for="detective-name">Seu nome de detetive:</label>
+        <input type="text" id="detective-name" placeholder="Digite seu nome" />
+      </div>
+      <button id="start-button" class="primary-button">Iniciar Jogo</button>
+    </div>
+
+    <!-- Game screen containing the narrative, choices and scoring -->
+    <div id="game-screen" class="screen" style="display: none;">
+      <div class="hud">
+        <div class="hud-left">
+          <img id="chosen-avatar" src="" alt="Avatar" />
+          <div class="player-info">
+            <div id="player-name" class="player-name"></div>
+            <div id="player-rank" class="player-rank">Detective</div>
+          </div>
+        </div>
+        <div class="hud-right">
+          <div class="score">Pontuação: <span id="score">0</span></div>
+          <div class="prestige">Prestígio: <span id="prestige">0</span></div>
+        </div>
+      </div>
+      <!-- Narrative text container -->
+      <div id="dialogue" class="dialogue">
+        <p id="dialogue-text"></p>
+      </div>
+      <!-- Choice buttons will be inserted here dynamically -->
+      <div id="options" class="options"></div>
+    </div>
+
+    <!-- Result screen shown at the end of the demo -->
+    <div id="result-screen" class="screen" style="display: none;">
+      <h2>Parabéns!</h2>
+      <p id="final-message"></p>
+      <button id="restart-button" class="primary-button">Jogar Novamente</button>
+    </div>
+
+    <!-- Include the game script -->
+    <script src="script.js"></script>
+  </body>
+</html>
