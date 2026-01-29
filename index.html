@@ -8,6 +8,7 @@
 </head>
 
 <body>
+  <button id="resetGame" type="button" style="position:fixed;top:12px;left:12px;z-index:9999;border:1px solid rgba(255,255,255,0.16);background:rgba(10,10,15,0.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#fff;padding:10px 12px;border-radius:12px;font-size:14px;line-height:1;cursor:pointer;">↺ Reset</button>
 <div id="app">
 
     <!-- 🖼 INTRODUÇÃO -->
@@ -96,7 +97,6 @@
             <p id="caseSummary"></p>
 
             <button class="primaryBtn" onclick="openInvestigation()">Iniciar Investigação</button>
-            <button class="dangerBtn" onclick="resetGame()">Resetar Jogo</button>
             <button class="secondaryBtn" onclick="goToOffice()">Voltar</button>
         </div>
     </section>
@@ -113,48 +113,8 @@
                 <button class="menuBtn" onclick="openWitnessList()">Testemunhas</button>
                 <button class="menuBtn" onclick="openSuspectList()">Suspeitos</button>
                 <button class="menuBtn" onclick="openEvidenceList()">Provas</button>
-                <button class="menuBtn" onclick="openInvestigationLog()">Quadro</button>
             </div>
             <button class="secondaryBtn" onclick="returnToCase()">Voltar</button>
-        </div>
-    </section>
-
-    <!-- 🧷 QUADRO / DIÁRIO DE INVESTIGAÇÃO -->
-    <section id="logScreen" class="screen">
-        <img src="assets/board_bg.png" class="full-bg">
-        <div class="card glass fadeIn logCard">
-            <div class="logHeader">
-                <h2>Quadro de Investigação</h2>
-                <p class="logSub" id="logCaseTitle"></p>
-            </div>
-
-            <div class="logGrid">
-                <div class="logPanel">
-                    <h3>Checklist</h3>
-                    <div id="logChecklist" class="checklist"></div>
-                    <div class="progressRow">
-                        <div class="meterBar"><div id="logProgressBar"></div></div>
-                        <span id="logProgressText" class="statPercent">0%</span>
-                    </div>
-                </div>
-
-                <div class="logPanel">
-                    <h3>Descobertas</h3>
-                    <div id="logTimeline" class="timeline"></div>
-                </div>
-            </div>
-
-            <div class="logNotes">
-                <h3>Anotações do Detetive</h3>
-                <textarea id="noteInput" class="noteInput" placeholder="Escreva uma anotação (ex: contradição, motivo, ligação entre pistas)..."></textarea>
-                <div class="noteActions">
-                    <button class="primaryBtn" onclick="saveNote()">Salvar anotação</button>
-                    <button class="secondaryBtn" onclick="clearNotes()">Limpar anotações</button>
-                </div>
-                <div id="noteList" class="noteList"></div>
-            </div>
-
-            <button class="secondaryBtn" onclick="closeInvestigationLog()">Voltar</button>
         </div>
     </section>
 
@@ -231,7 +191,6 @@
         <img src="assets/forensic_bg.png" class="full-bg">
         <div class="card glass fadeIn">
             <img id="forensicImage" class="caseImage">
-            <p id="forensicDesc" class="mutedText" style="margin-top:12px"></p>
             <button class="secondaryBtn" onclick="closeForensic()">Voltar</button>
         </div>
     </section>
@@ -404,5 +363,7 @@
 </div>
 
 <script src="game.js"></script>
+  <script src="js/vale_audio.js"></script>
+  <script src="js/vale_reset.js"></script>
 </body>
 </html>

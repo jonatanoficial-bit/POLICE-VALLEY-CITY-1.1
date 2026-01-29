@@ -1,0 +1,21 @@
+[
+  {
+    "id": "POL_S1_01",
+    "level": "police",
+    "title": "Sombras no Beco 12",
+    "description": "Um corpo foi encontrado em um beco estreito próximo ao centro. Chuva apagou parte das marcas. Você tem poucas horas antes que a cena seja liberada.",
+    "crimeScene": "assets/crime_scene_01.jpg",
+    "evidences": [
+      "assets/evidence_weapon_01.png",
+      "assets/evidence_doc_01.png"
+    ],
+    "witnesses": [
+      "assets/witness_01.jpg"
+    ],
+    "suspects": [
+      "assets/suspect_01.jpg",
+      "assets/suspect_02.jpg"
+    ],
+    "culprit": "assets/suspect_02.jpg"
+  }
+]

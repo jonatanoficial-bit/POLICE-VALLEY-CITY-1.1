@@ -1,0 +1,5 @@
+Valley City: Crime Unit — COMPLETE v1
+- Áudio único integrado: audio/main_theme.mp3
+- Botão Som (M) + Reset
+- Fallback de imagens: assets/placeholder.png
+- /data/cases_season1.json incluído (opcional)
