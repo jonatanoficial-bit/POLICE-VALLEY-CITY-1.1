@@ -21,6 +21,10 @@ let casesLoaded = false;
 let viewedEvidence = [];
 let viewedWitnesses = [];
 
+// Diário do caso atual (linha do tempo) e anotações livres do jogador
+let investigationLog = [];
+let caseNotes = [];
+
 // ===========================
 // AUTOSAVE SYSTEM
 // ===========================
@@ -39,7 +43,12 @@ function saveGame() {
       playerName,
       currentCaseIndex,
       gameState: { ...gameState },
-      lastScreen
+      lastScreen,
+      // progresso do caso atual (para continuar de onde parou)
+      viewedEvidence: [...viewedEvidence],
+      viewedWitnesses: [...viewedWitnesses],
+      investigationLog: [...investigationLog],
+      caseNotes: [...caseNotes]
     };
     localStorage.setItem("valleyCitySave", JSON.stringify(data));
   } catch (err) {
@@ -65,9 +74,29 @@ function loadGame() {
       Object.assign(gameState, data.gameState);
     }
     if (data.lastScreen) lastScreen = data.lastScreen;
+    if (Array.isArray(data.viewedEvidence)) viewedEvidence = data.viewedEvidence;
+    if (Array.isArray(data.viewedWitnesses)) viewedWitnesses = data.viewedWitnesses;
+    if (Array.isArray(data.investigationLog)) investigationLog = data.investigationLog;
+    if (Array.isArray(data.caseNotes)) caseNotes = data.caseNotes;
   } catch (err) {
     console.error("Erro ao carregar jogo salvo:", err);
   }
+}
+
+/**
+ * Reseta completamente o progresso do jogador (save + variáveis em memória).
+ * Útil para testes e para o jogador recomeçar do zero.
+ */
+function resetGame() {
+  const ok = confirm("Isso vai apagar seu progresso salvo e reiniciar o jogo. Deseja continuar?");
+  if (!ok) return;
+  try {
+    localStorage.removeItem("valleyCitySave");
+  } catch (err) {
+    console.error("Erro ao limpar save:", err);
+  }
+  // Recarrega a página para garantir um estado limpo
+  window.location.reload();
 }
 
 const gameState = {
@@ -186,7 +215,15 @@ if (typeof document !== 'undefined') {
   // reconstruímos o HUD. Caso contrário, iniciamos a introdução.
   document.addEventListener("DOMContentLoaded", () => {
     loadGame();
-    // Se já houver um jogador configurado, retome o jogo a partir do
+    
+    // Fallback global para imagens ausentes (evita telas quebradas)
+    document.querySelectorAll("img").forEach(img => {
+      img.onerror = () => {
+        img.onerror = null;
+        img.src = "assets/placeholder.png";
+      };
+    });
+// Se já houver um jogador configurado, retome o jogo a partir do
     // escritório. Caso contrário, comece pela introdução padrão.
     if (playerName) {
       // Mostra o escritório imediatamente com as estatísticas restauradas
@@ -548,15 +585,26 @@ function endExam() {
 async function ensureCasesLoaded() {
   if (casesLoaded) return;
 
-  try {
-    const response = await fetch("cases.json?nocache=" + Date.now(), { cache: "no-store" });
-    const data = await response.json();
-    casesData = data.cases || [];
-    casesLoaded = true;
-  } catch (err) {
-    console.error("Erro ao carregar cases.json:", err);
-    alert("Erro ao carregar os casos. Verifique o arquivo cases.json.");
+  const tryUrls = [
+    "data/cases.json",
+    "cases.json"
+  ];
+
+  for (const url of tryUrls) {
+    try {
+      const response = await fetch(url + "?nocache=" + Date.now(), { cache: "no-store" });
+      if (!response.ok) throw new Error("HTTP " + response.status);
+      const data = await response.json();
+      casesData = data.cases || [];
+      casesLoaded = true;
+      return;
+    } catch (err) {
+      console.warn("Falha ao carregar casos em", url, err);
+    }
   }
+
+  console.error("Erro ao carregar cases.json (todas as tentativas falharam).");
+  alert("Erro ao carregar os casos. Verifique o arquivo cases.json.");
 }
 
 async function loadNextCase() {
@@ -791,6 +839,8 @@ function randomEvent() {
 function resetCaseProgress() {
   viewedEvidence = [];
   viewedWitnesses = [];
+  investigationLog = [];
+  caseNotes = [];
 }
 
 function updateInvestigationProgress() {
@@ -805,7 +855,9 @@ function registerEvidenceViewed(fileName) {
   if (!currentCase || !currentCase.evidence) return;
   if (currentCase.evidence.includes(fileName) && !viewedEvidence.includes(fileName)) {
     viewedEvidence.push(fileName);
+    addLogEvent("Prova analisada", fileName);
     updateInvestigationProgress();
+    saveGame();
   }
 }
 
@@ -813,8 +865,177 @@ function registerWitnessViewed(fileName) {
   if (!currentCase || !currentCase.witnesses) return;
   if (currentCase.witnesses.includes(fileName) && !viewedWitnesses.includes(fileName)) {
     viewedWitnesses.push(fileName);
+    addLogEvent("Testemunha interrogada", fileName);
     updateInvestigationProgress();
+    saveGame();
   }
+}
+
+function nowStamp() {
+  const d = new Date();
+  return d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+}
+
+function addLogEvent(title, fileName, extra) {
+  const entry = {
+    t: nowStamp(),
+    title,
+    fileName: fileName || "",
+    extra: extra || ""
+  };
+  investigationLog.unshift(entry);
+}
+
+function getEntityLabel(fileName) {
+  if (!fileName) return "";
+  const numMatch = fileName.match(/_(\d+)\./);
+  const num = numMatch ? numMatch[1] : "";
+  if (fileName.startsWith("witness")) return `Testemunha ${num ? "#" + num : ""}`.trim();
+  if (fileName.startsWith("suspect")) return `Suspeito ${num ? "#" + num : ""}`.trim();
+  if (fileName.startsWith("evidence")) return getEvidenceLabel(fileName);
+  return fileName;
+}
+
+function getEvidenceLabel(fileName) {
+  if (!fileName) return "Prova";
+  const numMatch = fileName.match(/_(\d+)\./);
+  const num = numMatch ? numMatch[1] : "";
+  if (fileName.startsWith("evidence_weapon")) return `Arma ${num ? "#" + num : ""}`.trim();
+  if (fileName.startsWith("evidence_doc")) return `Documento ${num ? "#" + num : ""}`.trim();
+  if (fileName.startsWith("evidence_text")) return `Texto ${num ? "#" + num : ""}`.trim();
+  if (fileName.startsWith("evidence_obj")) return `Objeto ${num ? "#" + num : ""}`.trim();
+  return `Prova ${num ? "#" + num : ""}`.trim();
+}
+
+function getEvidenceDescription(fileName) {
+  // Descrições geradas (base) — podem ser substituídas no futuro por descrições específicas por caso.
+  if (!fileName) return "";
+  const base = "Anote detalhes relevantes e verifique se há contradições com depoimentos.";
+  if (fileName.startsWith("evidence_weapon")) {
+    return "Arma potencialmente ligada ao crime. Verifique impressões digitais, resíduos e procedência. " + base;
+  }
+  if (fileName.startsWith("evidence_doc")) {
+    return "Documento coletado para análise. Procure datas, assinaturas, inconsistências e relações entre pessoas. " + base;
+  }
+  if (fileName.startsWith("evidence_text")) {
+    return "Mensagem/anotação encontrada. Atenção a nomes, locais, horários e possíveis códigos. " + base;
+  }
+  if (fileName.startsWith("evidence_obj")) {
+    return "Objeto recolhido na cena. Observe manchas, fibras, marcas de uso e possíveis proprietários. " + base;
+  }
+  return "Evidência coletada na cena. Observe detalhes, contexto e vínculo com suspeitos. " + base;
+}
+
+// ===========================
+// QUADRO / DIÁRIO DE INVESTIGAÇÃO
+// ===========================
+
+function openInvestigationLog() {
+  if (!currentCase) {
+    alert("Nenhum caso em investigação.");
+    return;
+  }
+  renderInvestigationBoard();
+  show("logScreen");
+}
+
+function closeInvestigationLog() {
+  show("investigationScreen");
+}
+
+function renderInvestigationBoard() {
+  const titleEl = document.getElementById("logCaseTitle");
+  const checklistEl = document.getElementById("logChecklist");
+  const timelineEl = document.getElementById("logTimeline");
+  const barEl = document.getElementById("logProgressBar");
+  const pctEl = document.getElementById("logProgressText");
+  const notesEl = document.getElementById("noteList");
+
+  if (titleEl) titleEl.textContent = currentCase ? (currentCase.title || "") : "";
+
+  const totalEvidence = currentCase?.evidence?.length || 0;
+  const totalWitnesses = currentCase?.witnesses?.length || 0;
+  const doneEvidence = viewedEvidence.length;
+  const doneWitnesses = viewedWitnesses.length;
+  const total = totalEvidence + totalWitnesses;
+  const done = doneEvidence + doneWitnesses;
+  const pct = total ? Math.round((done / total) * 100) : 0;
+
+  if (checklistEl) {
+    checklistEl.innerHTML = "";
+    checklistEl.appendChild(makeCheckItem("Provas analisadas", `${doneEvidence}/${totalEvidence}`, doneEvidence >= totalEvidence && totalEvidence > 0));
+    checklistEl.appendChild(makeCheckItem("Testemunhas interrogadas", `${doneWitnesses}/${totalWitnesses}`, doneWitnesses >= totalWitnesses && totalWitnesses > 0));
+    checklistEl.appendChild(makeCheckItem("Pronto para acusar", (doneEvidence >= totalEvidence && doneWitnesses >= totalWitnesses && (totalEvidence + totalWitnesses) > 0) ? "Sim" : "Não", doneEvidence >= totalEvidence && doneWitnesses >= totalWitnesses && (totalEvidence + totalWitnesses) > 0));
+  }
+
+  if (barEl) barEl.style.width = Math.min(100, Math.max(0, pct)) + "%";
+  if (pctEl) pctEl.textContent = pct + "%";
+
+  if (timelineEl) {
+    timelineEl.innerHTML = "";
+    if (!investigationLog.length) {
+      timelineEl.innerHTML = "<p class=\"mutedText\">Nenhuma descoberta registrada ainda. Analise provas e interrogue testemunhas.</p>";
+    } else {
+      investigationLog.forEach(e => {
+        const div = document.createElement("div");
+        div.className = "logEvent";
+        const label = getEntityLabel(e.fileName);
+        div.innerHTML = `<div class=\"time\">${e.t}</div><div><strong>${e.title}</strong>${label ? ` — ${label}` : ""}</div>${e.extra ? `<div class=\"mutedText\" style=\"margin-top:6px\">${e.extra}</div>` : ""}`;
+        timelineEl.appendChild(div);
+      });
+    }
+  }
+
+  if (notesEl) {
+    notesEl.innerHTML = "";
+    if (!caseNotes.length) {
+      notesEl.innerHTML = "<p class=\"mutedText\">Sem anotações ainda.</p>";
+    } else {
+      caseNotes.forEach(n => {
+        const div = document.createElement("div");
+        div.className = "noteItem";
+        div.innerHTML = `<div class=\"time\">${n.t}</div><div>${escapeHtml(n.text)}</div>`;
+        notesEl.appendChild(div);
+      });
+    }
+  }
+}
+
+function makeCheckItem(label, value, ok) {
+  const row = document.createElement("div");
+  row.className = "checkItem";
+  row.innerHTML = `<div class=\"checkLeft\"><span>${label}</span></div><span class=\"badge ${ok ? "ok" : ""}\">${value}</span>`;
+  return row;
+}
+
+function saveNote() {
+  const input = document.getElementById("noteInput");
+  if (!input) return;
+  const text = (input.value || "").trim();
+  if (!text) return;
+  caseNotes.unshift({ t: nowStamp(), text });
+  addLogEvent("Anotação adicionada", "", text);
+  input.value = "";
+  saveGame();
+  renderInvestigationBoard();
+}
+
+function clearNotes() {
+  const ok = confirm("Deseja apagar todas as anotações deste caso?");
+  if (!ok) return;
+  caseNotes = [];
+  addLogEvent("Anotações limpas", "");
+  saveGame();
+  renderInvestigationBoard();
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
 // ===========================
@@ -977,8 +1198,8 @@ function openDetail(fileName) {
     title = "Testemunha";
     desc = "Esta é uma testemunha do caso. Colete informações conversando.";
   } else if (fileName.startsWith("evidence")) {
-    title = "Prova";
-    desc = "Esta é uma prova coletada na cena. Analise-a com cuidado.";
+    title = getEvidenceLabel(fileName);
+    desc = getEvidenceDescription(fileName);
   } else if (fileName.startsWith("suspect")) {
     title = "Suspeito";
     desc = "Esta pessoa é um suspeito. Escolha com cuidado.";
@@ -1002,10 +1223,12 @@ function closeDetail() {
 
 function openForensic(fileName) {
   const imgEl = document.getElementById("forensicImage");
+  const descEl = document.getElementById("forensicDesc");
   if (imgEl) {
     // Registra que esta prova foi analisada
     registerEvidenceViewed(fileName);
     imgEl.src = `assets/${fileName}`;
+    if (descEl) descEl.textContent = getEvidenceDescription(fileName);
     show("forensicScreen");
   }
 }
@@ -1031,8 +1254,6 @@ function openWitnessDetail(fileName) {
   const titleEl = document.getElementById("interrogationTitle");
   const imgEl = document.getElementById("interrogationImage");
   const descEl = document.getElementById("interrogationDescription");
-  const questionContainer = document.getElementById("interrogationQuestions");
-  // Backwards compatibility: if container doesn't exist, create one in place of descEl
   if (titleEl) titleEl.textContent = "Testemunha";
   if (imgEl) imgEl.src = `assets/${fileName}`;
   if (descEl) {

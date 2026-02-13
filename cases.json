@@ -100,7 +100,7 @@
       ],
       "suspects": [
         "suspect_09.png",
-        "witness_07.png"
+        "suspect_07.png"
       ],
       "evidence": [
         "evidence_obj_02.png",
@@ -143,7 +143,7 @@
       ],
       "suspects": [
         "suspect_06.png",
-        "witness_13.png"
+        "suspect_08.png"
       ],
       "evidence": [
         "evidence_obj_01.png",
@@ -211,7 +211,7 @@
       ],
       "suspects": [
         "suspect_02.png",
-        "witness_06.png"
+        "suspect_05.png"
       ],
       "evidence": [
         "evidence_doc_01.png",

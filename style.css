@@ -111,6 +111,21 @@ body {
     color: #fff;
 }
 
+.dangerBtn {
+    padding: 14px 28px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    margin: 6px;
+    transition: 0.3s;
+    background: rgba(255, 80, 80, 0.20);
+    color: #fff;
+    font-weight: 600;
+    border: 1px solid rgba(255, 80, 80, 0.45);
+}
+.dangerBtn:hover { transform: translateY(-1px); }
+
 /* Inputs */
 .inputText {
     width: 90%;
@@ -139,6 +154,13 @@ body {
     width: 90%;
     max-width: 450px;
     margin: 0 auto;
+}
+
+/* Card: scroll seguro (mobile) */
+.card {
+    max-height: 90vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 /* ===========================================
@@ -624,9 +646,218 @@ body {
     text-align: center;
 }
 
+/* ===========================================
+   UI KIT v1 — Identidade Visual (ZIP 2)
+   - Mantém classes existentes
+   - Apenas melhora aparência/consistência
+   =========================================== */
+
+:root{
+  --bg0:#07070c;
+  --bg1:#0a0a12;
+  --panel: rgba(20, 22, 35, 0.55);
+  --panel2: rgba(255,255,255,0.08);
+  --stroke: rgba(255,255,255,0.14);
+  --stroke2: rgba(255,255,255,0.22);
+
+  --text:#ffffff;
+  --muted: rgba(255,255,255,0.72);
+
+  --gold1:#ffe08a;
+  --gold2:#ffbf2e;
+  --gold3:#ff9f0f;
+
+  --danger1:#ff5a5a;
+
+  --r-sm:12px;
+  --r-md:16px;
+  --r-lg:22px;
+
+  --shadow1: 0 12px 30px rgba(0,0,0,0.45);
+  --shadow2: 0 6px 18px rgba(0,0,0,0.35);
+
+  --ease: cubic-bezier(.2,.8,.2,1);
+}
+
+body{
+  background: radial-gradient(1200px 700px at 20% 10%, rgba(255,191,46,0.10), transparent 60%),
+              radial-gradient(900px 700px at 90% 0%, rgba(110,231,183,0.06), transparent 55%),
+              linear-gradient(180deg, var(--bg1), var(--bg0));
+  color: var(--text);
+}
+
+#app{
+  position: relative;
+  isolation: isolate;
+}
+#app::before{
+  content:"";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background-image:
+    radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px);
+  background-size: 3px 3px;
+  mix-blend-mode: overlay;
+  opacity: .35;
+}
+
+.screen{
+  overflow: hidden;
+}
+
+/* Tipografia */
+.gameTitle{
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-shadow: 0 10px 25px rgba(0,0,0,0.65);
+}
+h1,h2,h3{
+  text-shadow: 0 6px 18px rgba(0,0,0,0.55);
+}
+.label{
+  color: var(--muted);
+}
+
+/* Painéis */
+.glass, .card.glass{
+  background: linear-gradient(180deg, var(--panel), rgba(12,13,22,0.35));
+  border: 1px solid var(--stroke);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow1);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.card{
+  border-radius: var(--r-lg);
+}
+.centerBox{
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow1);
+}
+
+/* Botões */
+.primaryBtn, .secondaryBtn, .dangerBtn{
+  border-radius: 14px;
+  transition: transform .18s var(--ease), filter .18s var(--ease), box-shadow .18s var(--ease), background .18s var(--ease);
+  box-shadow: var(--shadow2);
+  touch-action: manipulation;
+}
+.primaryBtn{
+  background: linear-gradient(135deg, var(--gold1), var(--gold2) 45%, var(--gold3));
+  color: #0b0b0f;
+  border: 1px solid rgba(255,255,255,0.10);
+}
+.primaryBtn:hover{ transform: translateY(-2px); filter: brightness(1.02) saturate(1.08); }
+.primaryBtn:active{ transform: translateY(0px) scale(0.99); filter: brightness(0.98); }
+
+.secondaryBtn{
+  background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.08));
+  border: 1px solid var(--stroke);
+}
+.secondaryBtn:hover{ transform: translateY(-2px); background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.10)); }
+.secondaryBtn:active{ transform: translateY(0px) scale(0.99); }
+
+.dangerBtn{
+  background: linear-gradient(180deg, rgba(255,90,90,0.22), rgba(255,90,90,0.12));
+  border: 1px solid rgba(255,90,90,0.45);
+}
+.dangerBtn:hover{ transform: translateY(-2px); filter: saturate(1.05); }
+
+.primaryBtn:focus-visible,
+.secondaryBtn:focus-visible,
+.dangerBtn:focus-visible,
+.inputText:focus-visible{
+  outline: 3px solid rgba(255,191,46,0.35);
+  outline-offset: 2px;
+}
+
+/* Inputs */
+.inputText{
+  background: rgba(0,0,0,0.35);
+  border: 1px solid var(--stroke);
+  border-radius: 14px;
+  color: var(--text);
+}
+.inputText::placeholder{ color: rgba(255,255,255,0.45); }
+
+/* Badges / chips (se usar) */
+.chip{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid var(--stroke);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* Modal */
+.modal{
+  border-radius: var(--r-lg);
+  border: 1px solid var(--stroke);
+  box-shadow: var(--shadow1);
+}
+
+/* Acessibilidade: reduzir animações */
+@media (prefers-reduced-motion: reduce){
+  *{ transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+  .fadeIn{ opacity: 1 !important; transform: none !important; }
+}
+
+/* Mobile polish */
+@media (max-width: 480px){
+  .primaryBtn,.secondaryBtn,.dangerBtn{
+    width: 100%;
+    max-width: 420px;
+  }
+  .card{
+    padding: 16px !important;
+  }
+  .gameTitle{
+    letter-spacing: 0.10em;
+    font-size: 20px !important;
+  }
+}
+
+/* ===========================
+   QUADRO / DIÁRIO DE INVESTIGAÇÃO
+   =========================== */
+.logCard{max-width:1100px}
+.logHeader{display:flex;flex-direction:column;gap:6px}
+.logSub{opacity:.85;margin:0}
+.logGrid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:12px}
+.logPanel{padding:14px;border-radius:18px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08)}
+.logPanel h3{margin:0 0 10px 0}
+.checklist{display:flex;flex-direction:column;gap:8px}
+.checkItem{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:14px;background:rgba(0,0,0,0.18);border:1px solid rgba(255,255,255,0.06)}
+.checkLeft{display:flex;align-items:center;gap:10px}
+.badge{font-size:12px;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.08)}
+.badge.ok{background:rgba(60,179,113,0.16);border-color:rgba(60,179,113,0.30)}
+.timeline{display:flex;flex-direction:column;gap:10px;max-height:220px;overflow:auto;padding-right:4px}
+.logEvent{padding:10px 12px;border-radius:14px;background:rgba(0,0,0,0.18);border:1px solid rgba(255,255,255,0.06)}
+.logEvent .time{opacity:.75;font-size:12px;margin-bottom:4px}
+.progressRow{display:flex;align-items:center;gap:10px;margin-top:12px}
+.logNotes{margin-top:14px}
+.noteInput{width:100%;min-height:90px;border-radius:14px;padding:12px;border:1px solid rgba(255,255,255,0.10);background:rgba(0,0,0,0.25);color:#fff;outline:none}
+.noteInput:focus{border-color:rgba(255,211,77,0.45);box-shadow:0 0 0 4px rgba(255,211,77,0.12)}
+.noteActions{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.noteList{display:flex;flex-direction:column;gap:10px;margin-top:12px;max-height:220px;overflow:auto;padding-right:4px}
+.noteItem{padding:10px 12px;border-radius:14px;background:rgba(0,0,0,0.18);border:1px solid rgba(255,255,255,0.06)}
+.noteItem .time{opacity:.75;font-size:12px;margin-bottom:4px}
+
+@media (min-width: 900px){
+  .logGrid{grid-template-columns:1fr 1fr}
+}
 
 
-/* === VALE AUDIO TOGGLE + MOBILE POLISH (Complete v1) === */
+
+/* ===========================
+   VALE GAMES — BUILD + AUDIO UI
+   =========================== */
 #musicToggle{
   position: fixed;
   top: 12px;
@@ -645,5 +876,46 @@ body {
 }
 #musicToggle:hover{ transform: translateY(-1px); }
 #musicToggle:active{ transform: translateY(0px); }
+
+#buildInfo{
+  position: fixed;
+  bottom: 10px;
+  right: 12px;
+  z-index: 9999;
+  font-size: 12px;
+  letter-spacing: 0.4px;
+  color: rgba(255,255,255,0.75);
+  background: rgba(10,10,15,0.45);
+  border: 1px solid rgba(255,255,255,0.10);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 6px 10px;
+  border-radius: 10px;
+  pointer-events: none;
+}
+
+/* rolagem segura para textos longos no mobile */
 .card{ max-height: 78vh; overflow:auto; -webkit-overflow-scrolling: touch; }
+
+
+
+
+.devResetBtn{
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 9999;
+  border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(10,10,15,0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #ffffff;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+.devResetBtn:hover{ transform: translateY(-1px); }
+.devResetBtn:active{ transform: translateY(0px); }
 
